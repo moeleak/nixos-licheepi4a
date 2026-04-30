@@ -107,7 +107,7 @@ After the flash is complete, remove the SD card and reboot, you should see NixOS
 
 ## Kernel
 
-This branch uses RevyOS's `revyos/linux` `revyos/7.0.y` kernel together with
+This branch uses `moeleak/linux` `revyos/7.1.y` kernel together with
 the latest available TH1520 U-Boot, OpenSBI and boot firmware pins from RevyOS.
 
 The flake input also tracks `nixos-unstable`.
@@ -135,13 +135,13 @@ Here is an example configuration that you can use as a starting point: [Demo - D
 ## How this repo works
 
 LicheePi 4A use RevyOS officially.
-The basic idea of this repo is to use revyos's kernel, u-boot and opensbi, with a NixOS rootfs, to get NixOS running on LicheePi 4A.
+The basic idea of this repo is to use a RevyOS-derived kernel, U-Boot and OpenSBI, with a NixOS rootfs, to get NixOS running on LicheePi 4A.
 
 ## See Also
 
-RevyOS's kernel, u-boot and opensbi:
+Kernel, U-Boot and OpenSBI sources:
 
-- <https://github.com/revyos/linux.git>
+- <https://github.com/moeleak/linux.git>
 - <https://github.com/revyos/thead-u-boot.git>
 - <https://github.com/revyos/thead-opensbi.git>
 
