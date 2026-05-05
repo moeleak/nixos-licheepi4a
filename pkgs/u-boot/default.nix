@@ -22,6 +22,6 @@
   filesToInstall = [ "u-boot-with-spl.bin" ];
 }).overrideAttrs (oldAttrs: {
   patches = [
-    ./patches/0001-feat-use-mmcbootpart-1-for-nixos.patch
+    ./patches/0001-feat-prefer-sd-boot-scr-for-nixos.patch
   ];
 })

@@ -13,18 +13,23 @@ Default user: `lp4a`, default password: `lp4a`.
 Build u-boot:
 
 ```bash
-nix build .#uboot -L --show-trace
+nix build .#uboot --out-link result-uboot -L --show-trace
 ```
 
-After the build is complete, the u-boot will be in `result/u-boot-with-spl.bin`, please copy it to another place for later use.
+After the build is complete, the u-boot will be in `result-uboot/u-boot-with-spl.bin`.
 
 Build sdImage:
 
 ```bash
-nix build .#sdImage -L --show-trace
+nix build .#sdImage --out-link result-sdImage -L --show-trace
 ```
 
-After the build is complete, the image will be in `result/sd-image/nixos-licheepi4a-sd-image-xxx-riscv64-linux.img`.
+After the build is complete, the image will be in `result-sdImage/sd-image/nixos-licheepi4a-sd-image-xxx-riscv64-linux.img`.
+
+The U-Boot build and sdImage should be flashed together. This U-Boot loads
+`/boot.scr` from partition 1, prefers SD when SD has `/boot.scr`, and falls back
+to eMMC otherwise. The boot script passes `root=PARTUUID=...` from partition 2
+of the selected boot device to the kernel.
 
 ## Flash into SD card
 
@@ -37,37 +42,37 @@ According to the official docs, the flash process of LicheePi 4A is as follows:
 2. Then use the following command to flash the image into the board's eMMC.
    1. The fastboot program can be downloaded directly from [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools), or installed from the package manager.
 
-So first, download the prebuilt `u-boot-with-spl.bin` & `nixos-licheepi4a-sd-image-xxx-riscv64-linux.img.tar.zst` from releases, or build them by yourself.
+So first, download the prebuilt `u-boot-with-spl.bin` and
+`nixos-licheepi4a-sd-image-xxx-riscv64-linux.img.tar.zst` from releases and
+extract the `.img`, or build them by yourself.
 
 Then, flash into the board's spl partition and uboot partition:
 
 ```bash
-# flash u-boot into spl partition
-sudo fastboot flash ram u-boot-with-spl.bin
-sudo fastboot reboot
-# flash uboot partition
-sudo fastboot flash uboot u-boot-with-spl.bin
+scripts/flash_uboot.sh
 ```
 
 Finally, flash boot & rootfs into SD card:
 
 ```bash
-$ scripts/flash_sd.sh
+scripts/flash_sd.sh
 ```
 
 Now insert the SD card into the board, and power on, you should see NixOS booting.
 
-> Due to the problem of the image, you need to resize the rootfs manually after the first boot.
+The script expands the root partition to fit the target card and randomizes the
+GPT partition UUIDs, so a cloned SD/eMMC image will still boot from the selected
+medium.
 
 ## Flash into eMMC
 
 To flash the image into the board's eMMC, you need to flash the image into the SD Card and boot into NixOS via it first.
 
-Then, use the following command to flash the image into the board's eMMC:
+Then, use the flashing script to flash the image into the board's eMMC:
 
 ```bash
-# upload the sdImage to the NixOS system on the board
-scp nixos-lp4a.img lp4a@<ip-of-your-board>:~/
+# upload the sdImage and flashing scripts to the NixOS system on the board
+scp -r scripts nixos-lp4a.img lp4a@<ip-of-your-board>:~/
 
 # login to the board via ssh or serial port
 ssh lp4a@<ip-of-your-board>
@@ -86,13 +91,15 @@ mmcblk1      179:24   0 117.8G  0 disk
 └─mmcblk1p2  179:26   0 117.5G  0 part /nix/store
                                        /
 
-# flash the image into the board's eMMC
-sudo dd if=nixos-lp4a.img of=/dev/mmcblk0 bs=4M status=progress
+# run the script, choose nixos-lp4a.img as the image and /dev/mmcblk0 as target
+scripts/flash_sd.sh
 ```
 
-After the flash is complete, remove the SD card and reboot, you should see NixOS booting from eMMC.
+After the flash is complete, remove the SD card and reboot, you should see NixOS
+booting from eMMC. If a bootable SD card is inserted, U-Boot will intentionally
+prefer SD.
 
-> Due to the problem of the image, you need to resize the rootfs manually after the first boot.
+The first boot on eMMC will expand the root partition automatically.
 
 ## TODOs & Known Issues
 

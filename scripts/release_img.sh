@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -e
 
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")
@@ -11,7 +11,6 @@ select_img
 
 mkdir -p ./release
 
-IMAGE=${IMAGE:-${DEFAULT_IMAGE}}
 IMAGE_NAME=$(basename "${IMAGE}")
 
 echo

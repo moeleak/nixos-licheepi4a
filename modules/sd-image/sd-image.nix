@@ -2,7 +2,7 @@
 #
 #  https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/installer/sd-card/sd-image.nix
 #
-# chainsx provides a U-Boot where normal Distro Boot(extlinux.conf) works well. but:
+# chainsx provides a U-Boot where normal Distro Boot works well. but:
 #     1. it requires the first partition to be /boot and the second partition to be /.
 #     1. it requires the the partition table to be GPT instead of MBR/DOS.
 #
@@ -219,8 +219,7 @@ in
         # Have to use GPT for the disk table, otherwise licheepi's u-boot will report:
         #    ** Unrecognized filesystem type **
         # 
-        # The "bootable" partition is where u-boot will look file for the bootloader
-        # information (dtbs, extlinux.conf file).
+        # The "bootable" partition is where U-Boot will look for boot files.
         #
         # Lichee Pi 4A will boot from its builtin spl flash first, so we don't need to
         # set the bootable flag on the first partition.
@@ -281,7 +280,7 @@ in
         # Figure out device names for the boot device and root filesystem.
         rootPart=$(${pkgs.util-linux}/bin/findmnt -n -o SOURCE /)
         bootDevice=$(lsblk -npo PKNAME $rootPart)
-        partNum=$(lsblk -npo MAJ:MIN $rootPart | ${pkgs.gawk}/bin/awk -F: '{print $2}')
+        partNum=$(lsblk -npo PARTN $rootPart)
 
         # Resize the root partition and the filesystem to fit the disk
         echo ",+," | sfdisk -N$partNum --no-reread $bootDevice
