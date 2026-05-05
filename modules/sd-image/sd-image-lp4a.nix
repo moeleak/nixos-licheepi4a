@@ -32,17 +32,11 @@ else
   exit
 fi
 
-if part uuid mmc $mmcdev:2 rootpartuuid; then
-  echo "NixOS: root PARTUUID is $rootpartuuid"
-  setenv nixos_root "root=PARTUUID=$rootpartuuid"
+echo "NixOS: using Linux MMC root device"
+if test "$mmcdev" = "1"; then
+  setenv nixos_root "root=/dev/mmcblk1p2"
 else
-  echo "NixOS: failed to read root partition UUID from mmc $mmcdev:2"
-  echo "NixOS: falling back to Linux MMC root device"
-  if test "$mmcdev" = "1"; then
-    setenv nixos_root "root=/dev/mmcblk1p2"
-  else
-    setenv nixos_root "root=/dev/mmcblk0p2"
-  fi
+  setenv nixos_root "root=/dev/mmcblk0p2"
 fi
 
 echo "NixOS: kernel root is $nixos_root"

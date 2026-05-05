@@ -28,8 +28,9 @@ After the build is complete, the image will be in `result-sdImage/sd-image/nixos
 
 The U-Boot build and sdImage should be flashed together. This U-Boot loads
 `/boot.scr` from partition 1, prefers SD when SD has `/boot.scr`, and falls back
-to eMMC otherwise. The boot script passes `root=PARTUUID=...` from partition 2
-of the selected boot device to the kernel.
+to eMMC otherwise. The boot script passes `/dev/mmcblk1p2` for SD and
+`/dev/mmcblk0p2` for eMMC to the kernel, based on the selected U-Boot MMC
+device.
 
 ## Flash into SD card
 
@@ -61,8 +62,7 @@ scripts/flash_sd.sh
 Now insert the SD card into the board, and power on, you should see NixOS booting.
 
 The script expands the root partition to fit the target card and randomizes the
-GPT partition UUIDs, so a cloned SD/eMMC image will still boot from the selected
-medium.
+GPT partition UUIDs, so cloned SD/eMMC images remain distinguishable.
 
 ## Flash into eMMC
 
