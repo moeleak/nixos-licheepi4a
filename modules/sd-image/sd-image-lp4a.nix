@@ -25,13 +25,6 @@ fi
 
 echo "NixOS: booting from mmc $mmcdev:$mmcbootpart"
 
-if mmc dev $mmcdev; then
-  echo "NixOS: selected mmc $mmcdev"
-else
-  echo "NixOS: failed to select mmc $mmcdev"
-  exit
-fi
-
 echo "NixOS: using Linux MMC root device"
 if test "$mmcdev" = "1"; then
   setenv nixos_root "root=/dev/mmcblk1p2"
