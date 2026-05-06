@@ -125,6 +125,35 @@ By default, this repo uses the `thead/th1520-lichee-pi-4a-16g.dtb` device tree.
 If your board is not the 16G variant, change `hardware.deviceTree.name` in
 `modules/licheepi4a.nix` back to `thead/th1520-lichee-pi-4a.dtb`.
 
+## Chromium LP4A hardware decode
+
+This repo exposes `.#chromium-lp4a`, a Chromium build that enables the V4L2
+codec backend on `riscv64` and wraps Chromium with LP4A-oriented video decode
+flags. It is not installed in the default image because Chromium is a large
+build.
+
+To install it in a custom system, import the optional module:
+
+```nix
+{
+  imports = [
+    ./modules/chromium-lp4a.nix
+  ];
+}
+```
+
+The module also installs `v4l-utils`, `libva-utils`, and GStreamer test tools,
+and grants the `video` group access to `/dev/video*`, `/dev/media*`,
+`/dev/hantrodec`, `/dev/vc8000`, `/dev/vidmem`, and `/dev/memalloc`.
+
+After booting, check the decoder path with:
+
+```bash
+v4l2-ctl --list-devices
+media-ctl -p
+chromium chrome://media-internals
+```
+
 ## Debug via serial port
 
 See [Debug.md](./Debug.md)

@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MoeLeak <moeleak@users.noreply.github.com>
+Date: Wed, 6 May 2026 20:40:00 +0800
+Subject: [PATCH] chromium: enable riscv64 V4L2 codec path
+
+Chromium supports the GN target CPU name "riscv64", but the nixpkgs
+Chromium wrapper did not map Nix's riscv64 CPU name to it. This prevented
+the package from evaluating on LP4A.
+
+Enable Chromium's V4L2 codec backend on riscv64 as an LP4A first step.
+LP4A's VC8000D/E hardware decode path is expected to be exposed through
+kernel media/video devices rather than the removed OpenMAX/FFmpeg hook.
+---
+ pkgs/applications/networking/browsers/chromium/common.nix | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/pkgs/applications/networking/browsers/chromium/common.nix b/pkgs/applications/networking/browsers/chromium/common.nix
+--- a/pkgs/applications/networking/browsers/chromium/common.nix
++++ b/pkgs/applications/networking/browsers/chromium/common.nix
+@@ -217,6 +217,7 @@ let
+           "i686" = "x86";
+           "arm" = "arm";
+           "aarch64" = "arm64";
++          "riscv64" = "riscv64";
+         }
+         .${platform.parsed.cpu.name} or (throw "no chromium Rosetta Stone entry for cpu: ${name}")
+       );
+@@ -877,8 +878,8 @@ let
+         enable_hangout_services_extension = true;
+         ffmpeg_branding = "Chrome";
+       }
+-      // lib.optionalAttrs stdenv.hostPlatform.isAarch64 {
+-        # Enable v4l2 video decoder for hardware acceleratation on aarch64:
++      // lib.optionalAttrs (stdenv.hostPlatform.isAarch64 || stdenv.hostPlatform.isRiscV64) {
++        # Enable v4l2 video decoder for hardware acceleration on ARM64/RISC-V boards:
+         use_vaapi = false;
+         use_v4l2_codec = true;
+       }
+-- 
+2.49.0

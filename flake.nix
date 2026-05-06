@@ -30,6 +30,7 @@
       overlay = final: prev: {
         light_aon_fpga = final.callPackage ./pkgs/firmware/light_aon_fpga.nix { };
         light_c906_audio = final.callPackage ./pkgs/firmware/light_c906_audio.nix { };
+        chromium-lp4a = final.callPackage ./pkgs/chromium-lp4a { };
         linux_thead = final.callPackage ./pkgs/linux { };
         linuxPackages_thead = final.linuxPackagesFor final.linux_thead;
         powervr_rogue = final.callPackage ./pkgs/firmware/powervr_rogue.nix { };
@@ -50,6 +51,7 @@
     {
       # expose this flake's overlay
       overlays.default = overlay;
+      nixosModules.chromium-lp4a = ./modules/chromium-lp4a.nix;
 
       # cross-build an sd-image
       nixosConfigurations.lp4a-cross = nixpkgs.lib.nixosSystem {
@@ -76,6 +78,7 @@
       packages.x86_64-linux = {
         linux = pkgsKernelCross.linux_thead;
         # u-boot & sdImage for boot from sdcard.
+        chromium-lp4a = pkgsKernelCross.chromium-lp4a;
         uboot = pkgsKernelCross.callPackage ./pkgs/u-boot { };
         sdImage = self.nixosConfigurations.lp4a-cross.config.system.build.sdImage;
 
