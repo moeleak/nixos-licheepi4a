@@ -144,6 +144,12 @@
     python3
     # openjdk # not support riscv64 now
     gcc
+
+    coreutils
+    util-linux
+    parted
+    e2fsprogs
+    gawk
   ];
 
   # Enable the OpenSSH daemon.
