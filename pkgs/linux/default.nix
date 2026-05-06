@@ -8,7 +8,7 @@
 
 buildLinux rec {
   pname = "linux-th1520";
-  version = "7.1.0-rc1";
+  version = "7.1.0-rc2";
   modDirVersion = version;
 
   src = fetchFromGitHub {
