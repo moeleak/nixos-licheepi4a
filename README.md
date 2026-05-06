@@ -30,7 +30,9 @@ The U-Boot build and sdImage should be flashed together. This U-Boot loads
 `/boot.scr` from partition 1, prefers SD when SD has `/boot.scr`, and falls back
 to eMMC otherwise. The boot script passes `/dev/mmcblk1p2` for SD and
 `/dev/mmcblk0p2` for eMMC to the kernel, based on the selected U-Boot MMC
-device.
+device. It uses `/nix/var/nix/profiles/system/init` as the NixOS init path, so
+remote deployments that update the system profile are picked up on the next
+boot.
 
 ## Flash into SD card
 
@@ -135,7 +137,7 @@ You can clone this repository and modify `modules/licheepi4a.nix` to add your de
 
 Also, you can flash the default image and then modify the configuration on the board directly, you're able to use `nixos-rebuild switch` to apply your changes as a normal NixOS system, but this can be slow due to the limited resources of the board.
 
-As an alternative, you can also use remote deployment to deploy your custom configuration to the board without re-building or re-flashing the image, this will keep your filesystem (e.g. `/home/user`) intact.
+As an alternative, you can also use remote deployment to deploy your custom configuration to the board without re-building or re-flashing the image, this will keep your filesystem (e.g. `/home/user`) intact. The boot script follows `/nix/var/nix/profiles/system/init`, so `boot` deployments are activated after reboot.
 
 Here is an example configuration that you can use as a starting point: [Demo - Deployment](./demo)
 

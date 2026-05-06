@@ -33,7 +33,7 @@ else
 fi
 
 echo "NixOS: kernel root is $nixos_root"
-setenv bootargs "init=${config.system.build.toplevel}/init $nixos_root ${toString config.boot.kernelParams}"
+setenv bootargs "init=/nix/var/nix/profiles/system/init $nixos_root ${toString config.boot.kernelParams}"
 
 if load mmc $mmcdev:$mmcbootpart $kernel_addr_r /nixos/Image; then
   echo "NixOS: loaded kernel"
@@ -120,6 +120,8 @@ in {
 
     populateRootCommands = ''
       mkdir -p ./files/boot
+      mkdir -p ./files/nix/var/nix/profiles
+      ln -s ${config.system.build.toplevel} ./files/nix/var/nix/profiles/system
     '';
   };
 }
