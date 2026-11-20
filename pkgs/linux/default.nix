@@ -14,8 +14,8 @@ buildLinux rec {
   src = fetchFromGitHub {
     owner = "moeleak";
     repo = "linux";
-    rev = "bf46daffc5565a8502f604fc91105dffcbe99637"; # revyos/7.3.y on 2026-11-20
-    sha256 = "sha256-KKO96zvOW131aYQzR//veNPW57Puq64GkKY7WnyD3sQ=";
+    rev = "c43e3bfd3edf96344672b1a9a3642771a0062676"; # revyos/7.3.y on 2026-11-20
+    sha256 = "sha256-oTra2JXYm3SbpffB/CMjEVSn5HX2+544tcKV6iAbLj4=";
   };
 
   defconfig = "debian_defconfig";
