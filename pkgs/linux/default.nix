@@ -25,9 +25,15 @@ buildLinux rec {
     request_key_helper
   ];
 
+  # Rust, as RevyOS's own builds have it (also with GCC), which nixpkgs leaves
+  # off for riscv64 with GCC. The TH1520 PWM driver, which drives the fan, is
+  # written in Rust.
+  features.rust = true;
+
   structuredExtraConfig = with lib.kernel; {
     DRM_POWERVR = module;
     PSTORE = yes;
+    PWM_TH1520 = module;
   };
 
   extraMeta = {
