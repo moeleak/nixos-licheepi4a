@@ -34,6 +34,11 @@ buildLinux rec {
     DRM_POWERVR = module;
     PSTORE = yes;
     PWM_TH1520 = module;
+
+    # Off: GCC writes the absolute source path of each UBSAN check into the
+    # kernel, and nixpkgs keeps the source in the dev output, so the
+    # uncompressed Image would refer to dev, which refers to it.
+    UBSAN = no;
   };
 
   extraMeta = {
